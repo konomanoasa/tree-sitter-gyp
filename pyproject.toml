@@ -1,6 +1,6 @@
 [project]
 name = "konomanoasa-tree-sitter-gyp"
-version = "0.2.0"
+version = "0.2.1"
 description = "Tree-sitter grammar for GYP."
 readme = "README.md"
 license = "MIT"
