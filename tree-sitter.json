@@ -1,0 +1,37 @@
+{
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/config.schema.json",
+  "grammars": [
+    {
+      "name": "gyp",
+      "title": "GYP",
+      "scope": "source.gyp",
+      "path": ".",
+      "file-types": ["gyp", "gypi"],
+      "highlights": "queries/highlights.scm",
+      "camelcase": "Gyp"
+    }
+  ],
+  "metadata": {
+    "version": "0.1.0",
+    "license": "MIT",
+    "description": "Tree-sitter grammar for GYP.",
+    "links": {
+      "repository": "https://github.com/konomanoasa/tree-sitter-gyp"
+    },
+    "authors": [
+      {
+        "name": "konomanoasa"
+      }
+    ]
+  },
+  "bindings": {
+    "c": false,
+    "go": false,
+    "java": false,
+    "node": true,
+    "python": true,
+    "rust": true,
+    "swift": false,
+    "zig": false
+  }
+}

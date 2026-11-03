@@ -1,0 +1,29 @@
+CompileFlags:
+  Add:
+    - -Wall
+    - -Wextra
+    - -Werror
+    - -pedantic
+
+---
+If:
+  PathMatch: .*\.(c|h)
+CompileFlags:
+  Add:
+    - -std=c17
+    - -xc
+
+---
+If:
+  PathMatch: .*\.h
+CompileFlags:
+  Add:
+    - -xc-header
+
+---
+If:
+  PathMatch: bindings/node/.*\.cc
+CompileFlags:
+  CompilationDatabase: build/Release
+  Add:
+    - -std=c++17

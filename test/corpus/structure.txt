@@ -1,0 +1,532 @@
+==================
+Empty dictionary
+==================
+{}
+---
+(source_file body: (dictionary))
+
+==================
+String key and signed integer
+==================
+{'a': -12}
+---
+(source_file body: (dictionary entry: (entry
+  key: (string literal: (string_literal opening: (string_delimiter) content: (string_content) closing: (string_delimiter)))
+  value: (integer digits: (integer_digits)))))
+
+==================
+List elements and trailing commas
+==================
+{'': [1, {},],}
+---
+(source_file body: (dictionary entry: (entry
+  key: (string literal: (string_literal opening: (string_delimiter) closing: (string_delimiter)))
+  value: (list element: (integer digits: (integer_digits)) element: (dictionary)))))
+
+==================
+Missing colon retains key and value
+==================
+{'' 1}
+---
+(source_file body: (dictionary entry: (entry
+  key: (string literal: (string_literal opening: (string_delimiter) closing: (string_delimiter)))
+  issue: (syntax_issue (invalid_syntax (missing_colon)))
+  value: (integer digits: (integer_digits)))))
+
+==================
+Bad source after a key starts the value unless followed by a colon
+==================
+{'a' @ 1, 'b' @, 'c' @ : 2}
+---
+(source_file body: (dictionary
+  entry: (entry
+    key: (string literal: (string_literal opening: (string_delimiter) content: (string_content) closing: (string_delimiter)))
+    issue: (syntax_issue (invalid_syntax (missing_colon)))
+    issue: (syntax_issue (invalid_syntax (unexpected_token)))
+    value: (integer digits: (integer_digits)))
+  entry: (entry
+    key: (string literal: (string_literal opening: (string_delimiter) content: (string_content) closing: (string_delimiter)))
+    issue: (syntax_issue (invalid_syntax (missing_colon)))
+    issue: (syntax_issue (invalid_syntax (unexpected_token))))
+  entry: (entry
+    key: (string literal: (string_literal opening: (string_delimiter) content: (string_content) closing: (string_delimiter)))
+    issue: (syntax_issue (invalid_syntax (unexpected_token)))
+    value: (integer digits: (integer_digits)))))
+
+==================
+A bad source run after a key can gain its colon through EOF appends
+==================
+{'a' @ #c
+@
+---
+(source_file body: (dictionary
+  entry: (entry
+    key: (string literal: (string_literal opening: (string_delimiter) content: (string_content) closing: (string_delimiter)))
+    issue: (syntax_issue (incomplete_syntax (missing_colon)))
+    issue: (syntax_issue (invalid_syntax (unexpected_token)))
+    (comment (comment_content))
+    issue: (syntax_issue (invalid_syntax (unexpected_token))))
+  issue: (syntax_issue (incomplete_syntax (missing_dictionary_close)))))
+
+==================
+An ancestor close ends a bad value prefix after a missing colon
+==================
+{'x':[{'a' @]}
+---
+(source_file body: (dictionary
+  entry: (entry
+    key: (string literal: (string_literal opening: (string_delimiter) content: (string_content) closing: (string_delimiter)))
+    value: (list element: (dictionary
+      entry: (entry
+        key: (string literal: (string_literal opening: (string_delimiter) content: (string_content) closing: (string_delimiter)))
+        issue: (syntax_issue (invalid_syntax (missing_colon)))
+        issue: (syntax_issue (invalid_syntax (unexpected_token))))
+      issue: (syntax_issue (invalid_syntax (missing_dictionary_close))))))))
+
+==================
+Missing value at closing brace is invalid
+==================
+{'':}
+---
+(source_file body: (dictionary entry: (entry
+  key: (string literal: (string_literal opening: (string_delimiter) closing: (string_delimiter)))
+  issue: (syntax_issue (invalid_syntax (missing_value))))))
+
+==================
+Missing value at EOF is incomplete
+==================
+{'':
+---
+(source_file body: (dictionary entry: (entry
+  key: (string literal: (string_literal opening: (string_delimiter) closing: (string_delimiter)))
+  issue: (syntax_issue (incomplete_syntax (missing_value))))
+  issue: (syntax_issue (incomplete_syntax (missing_dictionary_close)))))
+
+==================
+Missing key retains colon and value
+==================
+{:1}
+---
+(source_file body: (dictionary entry: (entry
+  issue: (syntax_issue (invalid_syntax (missing_key)))
+  value: (integer digits: (integer_digits)))))
+
+==================
+Integer key retains its structure within the issue
+==================
+{1:2}
+---
+(source_file body: (dictionary entry: (entry
+  issue: (syntax_issue (invalid_syntax (non_string_key (integer digits: (integer_digits)))))
+  value: (integer digits: (integer_digits)))))
+
+==================
+List at root retains its structure within the issue
+==================
+[1]
+---
+(source_file issue: (syntax_issue (invalid_syntax (non_dictionary_root (list element: (integer digits: (integer_digits)))))))
+
+==================
+Missing list comma retains both elements
+==================
+{'': [1 2]}
+---
+(source_file body: (dictionary entry: (entry
+  key: (string literal: (string_literal opening: (string_delimiter) closing: (string_delimiter)))
+  value: (list element: (integer digits: (integer_digits))
+    issue: (syntax_issue (invalid_syntax (missing_comma)))
+    element: (integer digits: (integer_digits))))))
+
+==================
+Mismatched close remains owned by the dictionary
+==================
+{'': [1}
+---
+(source_file body: (dictionary entry: (entry
+  key: (string literal: (string_literal opening: (string_delimiter) closing: (string_delimiter)))
+  value: (list element: (integer digits: (integer_digits))
+    issue: (syntax_issue (invalid_syntax (missing_list_close)))))))
+
+==================
+Extra comma remains a dictionary issue
+==================
+{,}
+---
+(source_file body: (dictionary issue: (syntax_issue (invalid_syntax (unexpected_comma)))))
+
+==================
+Bare values and nondecimal numeric forms remain separate list issues
+==================
+{'': [True, 0xff, 012, 1_000, 1.5, -]}
+---
+(source_file body: (dictionary entry: (entry
+  key: (string literal: (string_literal opening: (string_delimiter) closing: (string_delimiter)))
+  value: (list
+    issue: (syntax_issue (invalid_syntax (invalid_value)))
+    element: (integer issue: (syntax_issue (invalid_syntax (invalid_integer))))
+    element: (integer issue: (syntax_issue (invalid_syntax (invalid_integer))))
+    element: (integer issue: (syntax_issue (invalid_syntax (invalid_integer))))
+    element: (integer issue: (syntax_issue (invalid_syntax (invalid_integer))))
+    element: (integer issue: (syntax_issue (invalid_syntax (missing_digits))))))))
+
+==================
+All zero decimal integers retain digits after either sign
+==================
+{'': [-000, +0]}
+---
+(source_file body: (dictionary entry: (entry
+  key: (string literal: (string_literal opening: (string_delimiter) closing: (string_delimiter)))
+  value: (list element: (integer digits: (integer_digits)) element: (integer digits: (integer_digits))))))
+
+==================
+Extra root values retain structure and a stray delimiter is separate
+==================
+{} [] :
+---
+(source_file body: (dictionary)
+  issue: (syntax_issue (invalid_syntax (extra_root_value (list))))
+  issue: (syntax_issue (invalid_syntax (unexpected_token))))
+
+==================
+An extra colon before the value preserves the entry
+==================
+{'': :1}
+---
+(source_file body: (dictionary entry: (entry
+  key: (string literal: (string_literal opening: (string_delimiter) closing: (string_delimiter)))
+  issue: (syntax_issue (invalid_syntax (unexpected_token)))
+  value: (integer digits: (integer_digits)))))
+
+==================
+An extra colon does not satisfy the missing value
+==================
+{'': :}
+---
+(source_file body: (dictionary entry: (entry
+  key: (string literal: (string_literal opening: (string_delimiter) closing: (string_delimiter)))
+  issue: (syntax_issue (invalid_syntax (unexpected_token)))
+  issue: (syntax_issue (invalid_syntax (missing_value))))))
+
+==================
+Bad source before a container or signed value keeps the value in the entry
+==================
+{'': @ [1], '': @ {}, '': : @ -1, '': @ +2}
+---
+(source_file body: (dictionary
+  entry: (entry
+    key: (string literal: (string_literal opening: (string_delimiter) closing: (string_delimiter)))
+    issue: (syntax_issue (invalid_syntax (unexpected_token)))
+    value: (list element: (integer digits: (integer_digits))))
+  entry: (entry
+    key: (string literal: (string_literal opening: (string_delimiter) closing: (string_delimiter)))
+    issue: (syntax_issue (invalid_syntax (unexpected_token)))
+    value: (dictionary))
+  entry: (entry
+    key: (string literal: (string_literal opening: (string_delimiter) closing: (string_delimiter)))
+    issue: (syntax_issue (invalid_syntax (unexpected_token)))
+    issue: (syntax_issue (invalid_syntax (unexpected_token)))
+    value: (integer digits: (integer_digits)))
+  entry: (entry
+    key: (string literal: (string_literal opening: (string_delimiter) closing: (string_delimiter)))
+    issue: (syntax_issue (invalid_syntax (unexpected_token)))
+    value: (integer digits: (integer_digits)))))
+
+==================
+A bad source run before a colon belongs entirely to its entry
+==================
+{@ @ : 1
+ '': 2, @ @ @ @ @ @ @ @ @ : 3}
+---
+(source_file body: (dictionary
+  entry: (entry
+    issue: (syntax_issue (invalid_syntax (unexpected_token)))
+    issue: (syntax_issue (invalid_syntax (unexpected_token)))
+    value: (integer digits: (integer_digits)))
+  issue: (syntax_issue (invalid_syntax (missing_comma)))
+  entry: (entry
+    key: (string literal: (string_literal opening: (string_delimiter) closing: (string_delimiter)))
+    value: (integer digits: (integer_digits)))
+  entry: (entry
+    issue: (syntax_issue (invalid_syntax (unexpected_token)))
+    issue: (syntax_issue (invalid_syntax (unexpected_token)))
+    issue: (syntax_issue (invalid_syntax (unexpected_token)))
+    issue: (syntax_issue (invalid_syntax (unexpected_token)))
+    issue: (syntax_issue (invalid_syntax (unexpected_token)))
+    issue: (syntax_issue (invalid_syntax (unexpected_token)))
+    issue: (syntax_issue (invalid_syntax (unexpected_token)))
+    issue: (syntax_issue (invalid_syntax (unexpected_token)))
+    issue: (syntax_issue (invalid_syntax (unexpected_token)))
+    value: (integer digits: (integer_digits)))))
+
+==================
+Invalid list separators preserve elements without missing comma duplicates
+==================
+{'': [:1:2:]}
+---
+(source_file body: (dictionary entry: (entry
+  key: (string literal: (string_literal opening: (string_delimiter) closing: (string_delimiter)))
+  value: (list
+    issue: (syntax_issue (invalid_syntax (unexpected_token)))
+    element: (integer digits: (integer_digits))
+    issue: (syntax_issue (invalid_syntax (unexpected_token)))
+    element: (integer digits: (integer_digits))
+    issue: (syntax_issue (invalid_syntax (unexpected_token)))))))
+
+==================
+Fractions without leading digits remain invalid integers after signs and missing commas
+==================
+{'': [.5, -.5 .5e-3]}
+---
+(source_file body: (dictionary entry: (entry
+  key: (string literal: (string_literal opening: (string_delimiter) closing: (string_delimiter)))
+  value: (list
+    element: (integer issue: (syntax_issue (invalid_syntax (invalid_integer))))
+    element: (integer issue: (syntax_issue (invalid_syntax (invalid_integer))))
+    issue: (syntax_issue (invalid_syntax (missing_comma)))
+    element: (integer issue: (syntax_issue (invalid_syntax (invalid_integer))))))))
+
+==================
+Non-ASCII bare words and numeric suffixes remain whole invalid literals
+==================
+{'': [é, abcé, 1é, -1é, 'é']}
+---
+(source_file body: (dictionary entry: (entry
+  key: (string literal: (string_literal opening: (string_delimiter) closing: (string_delimiter)))
+  value: (list
+    issue: (syntax_issue (invalid_syntax (invalid_value)))
+    issue: (syntax_issue (invalid_syntax (invalid_value)))
+    element: (integer issue: (syntax_issue (invalid_syntax (invalid_integer))))
+    element: (integer issue: (syntax_issue (invalid_syntax (invalid_integer))))
+    element: (string literal: (string_literal opening: (string_delimiter) content: (string_content) closing: (string_delimiter)))))))
+
+==================
+A stray list close keeps later entries in the open dictionary
+==================
+{'a':1], 'b':2}
+---
+(source_file body: (dictionary
+  entry: (entry key: (string literal: (string_literal opening: (string_delimiter) content: (string_content) closing: (string_delimiter))) value: (integer digits: (integer_digits)))
+  issue: (syntax_issue (invalid_syntax (unexpected_token)))
+  entry: (entry key: (string literal: (string_literal opening: (string_delimiter) content: (string_content) closing: (string_delimiter))) value: (integer digits: (integer_digits)))))
+
+==================
+A stray close in nested dictionaries stays in the innermost dictionary
+==================
+{'a':{'b':1], 'c':2}}
+---
+(source_file body: (dictionary entry: (entry
+  key: (string literal: (string_literal opening: (string_delimiter) content: (string_content) closing: (string_delimiter)))
+  value: (dictionary
+    entry: (entry key: (string literal: (string_literal opening: (string_delimiter) content: (string_content) closing: (string_delimiter))) value: (integer digits: (integer_digits)))
+    issue: (syntax_issue (invalid_syntax (unexpected_token)))
+    entry: (entry key: (string literal: (string_literal opening: (string_delimiter) content: (string_content) closing: (string_delimiter))) value: (integer digits: (integer_digits)))))))
+
+==================
+A stray close ends the entry and preserves its independent missing requirements
+==================
+{'a'], 'b':2}
+---
+(source_file body: (dictionary
+  entry: (entry
+    key: (string literal: (string_literal opening: (string_delimiter) content: (string_content) closing: (string_delimiter)))
+    issue: (syntax_issue (invalid_syntax (missing_colon)))
+    issue: (syntax_issue (invalid_syntax (missing_value))))
+  issue: (syntax_issue (invalid_syntax (unexpected_token)))
+  entry: (entry key: (string literal: (string_literal opening: (string_delimiter) content: (string_content) closing: (string_delimiter))) value: (integer digits: (integer_digits)))))
+
+==================
+A stray dictionary close keeps later elements in nested root lists
+==================
+[[1},2],3]
+---
+(source_file issue: (syntax_issue (invalid_syntax (non_dictionary_root (list
+  element: (list
+    element: (integer digits: (integer_digits))
+    issue: (syntax_issue (invalid_syntax (unexpected_token)))
+    element: (integer digits: (integer_digits)))
+  element: (integer digits: (integer_digits)))))))
+
+==================
+An ancestor list close ends every intervening dictionary before the next outer entry
+==================
+{'a':[{'b':{'c':1], 'd':2}
+---
+(source_file body: (dictionary
+  entry: (entry
+    key: (string literal: (string_literal opening: (string_delimiter) content: (string_content) closing: (string_delimiter)))
+    value: (list element: (dictionary
+      entry: (entry
+        key: (string literal: (string_literal opening: (string_delimiter) content: (string_content) closing: (string_delimiter)))
+        value: (dictionary
+          entry: (entry key: (string literal: (string_literal opening: (string_delimiter) content: (string_content) closing: (string_delimiter))) value: (integer digits: (integer_digits)))
+          issue: (syntax_issue (invalid_syntax (missing_dictionary_close)))))
+      issue: (syntax_issue (invalid_syntax (missing_dictionary_close))))))
+  entry: (entry key: (string literal: (string_literal opening: (string_delimiter) content: (string_content) closing: (string_delimiter))) value: (integer digits: (integer_digits)))))
+
+==================
+A stray close does not supply a missing comma between entries
+==================
+{'a':1] 'b':2}
+---
+(source_file body: (dictionary
+  entry: (entry key: (string literal: (string_literal opening: (string_delimiter) content: (string_content) closing: (string_delimiter))) value: (integer digits: (integer_digits)))
+  issue: (syntax_issue (invalid_syntax (unexpected_token)))
+  issue: (syntax_issue (invalid_syntax (missing_comma)))
+  entry: (entry key: (string literal: (string_literal opening: (string_delimiter) content: (string_content) closing: (string_delimiter))) value: (integer digits: (integer_digits)))))
+
+==================
+Continued indentation is owned by the source without consuming the continuation
+==================
+# c
+ \
+{}
+---
+(source_file (comment (comment_content)) issue: (syntax_issue (invalid_syntax (invalid_indentation))) (line_continuation) body: (dictionary))
+
+==================
+Continued blank lines discard indentation before the dictionary
+==================
+# c
+ \
+
+{}
+---
+(source_file (comment (comment_content)) (line_continuation) body: (dictionary))
+
+==================
+Whitespace at EOF after a root newline is incomplete indentation
+==================
+{}
+ 
+---
+(source_file body: (dictionary) issue: (syntax_issue (incomplete_syntax (invalid_indentation))))
+
+==================
+A continuation newline at EOF retains the missing content separately
+==================
+{}\
+
+---
+(source_file body: (dictionary) (line_continuation issue: (syntax_issue (incomplete_syntax (missing_line_continuation_content)))))
+
+==================
+Root recovery tokens do not turn following same-line spaces into indentation
+==================
+@ } {}
+---
+(source_file
+  issue: (syntax_issue (invalid_syntax (unexpected_token)))
+  issue: (syntax_issue (invalid_syntax (unexpected_token)))
+  body: (dictionary))
+
+==================
+A root string that is not continued ends before following layout and indentation
+==================
+{} 'a' # c
+ {}
+---
+(source_file body: (dictionary)
+  issue: (syntax_issue (invalid_syntax (extra_root_value
+    (string literal: (string_literal opening: (string_delimiter) content: (string_content) closing: (string_delimiter))))))
+  (comment (comment_content))
+  issue: (syntax_issue (invalid_syntax (invalid_indentation)))
+  issue: (syntax_issue (invalid_syntax (extra_root_value (dictionary)))))
+
+==================
+A backslash without a newline is a token on its line rather than a continuation or indentation
+==================
+# c
+ \# d
+\ {}
+---
+(source_file
+  (comment (comment_content))
+  issue: (syntax_issue (invalid_syntax (invalid_indentation)))
+  (line_continuation issue: (syntax_issue (invalid_syntax (missing_line_continuation_newline))))
+  (comment (comment_content))
+  (line_continuation issue: (syntax_issue (invalid_syntax (missing_line_continuation_newline))))
+  body: (dictionary))
+
+==================
+A root sign ends at an ordinary newline before independently indented digits
+==================
+-
+ 1
+---
+(source_file
+  issue: (syntax_issue (invalid_syntax (non_dictionary_root
+    (integer issue: (syntax_issue (invalid_syntax (missing_digits)))))))
+  issue: (syntax_issue (invalid_syntax (invalid_indentation)))
+  issue: (syntax_issue (invalid_syntax (extra_root_value
+    (integer digits: (integer_digits))))))
+
+==================
+A root sign joins following digits across an explicit line continuation
+==================
++\
+ 2
+---
+(source_file
+  issue: (syntax_issue (invalid_syntax (non_dictionary_root
+    (integer (line_continuation) digits: (integer_digits))))))
+
+==================
+A missing comma precedes the bad key source of the next confirmed entry
+==================
+{'a': 1 @ # key
+ @ : 2}
+---
+(source_file body: (dictionary
+  entry: (entry key: (string literal: (string_literal opening: (string_delimiter) content: (string_content) closing: (string_delimiter))) value: (integer digits: (integer_digits)))
+  issue: (syntax_issue (invalid_syntax (missing_comma)))
+  entry: (entry
+    issue: (syntax_issue (invalid_syntax (unexpected_token)))
+    (comment (comment_content))
+    issue: (syntax_issue (invalid_syntax (unexpected_token)))
+    value: (integer digits: (integer_digits)))))
+
+==================
+Bad source after a complete entry stays in the dictionary before a new valid key
+==================
+{'a': 1 @ @ 'b': 2}
+---
+(source_file body: (dictionary
+  entry: (entry key: (string literal: (string_literal opening: (string_delimiter) content: (string_content) closing: (string_delimiter))) value: (integer digits: (integer_digits)))
+  issue: (syntax_issue (invalid_syntax (unexpected_token)))
+  issue: (syntax_issue (invalid_syntax (unexpected_token)))
+  issue: (syntax_issue (invalid_syntax (missing_comma)))
+  entry: (entry key: (string literal: (string_literal opening: (string_delimiter) content: (string_content) closing: (string_delimiter))) value: (integer digits: (integer_digits)))))
+
+==================
+Bad source glued to a following bare word or number is not a key run
+==================
+{'a': 1 @x: 2, 'b': 3 @1: 4}
+---
+(source_file body: (dictionary
+  entry: (entry key: (string literal: (string_literal opening: (string_delimiter) content: (string_content) closing: (string_delimiter))) value: (integer digits: (integer_digits)))
+  issue: (syntax_issue (invalid_syntax (unexpected_token)))
+  issue: (syntax_issue (invalid_syntax (missing_comma)))
+  entry: (entry issue: (syntax_issue (invalid_syntax (invalid_value))) value: (integer digits: (integer_digits)))
+  entry: (entry key: (string literal: (string_literal opening: (string_delimiter) content: (string_content) closing: (string_delimiter))) value: (integer digits: (integer_digits)))
+  issue: (syntax_issue (invalid_syntax (unexpected_token)))
+  issue: (syntax_issue (invalid_syntax (missing_comma)))
+  entry: (entry issue: (syntax_issue (invalid_syntax (non_string_key (integer digits: (integer_digits))))) value: (integer digits: (integer_digits)))))
+
+==================
+Separated bad sources after a separator remain in the value position of their entry
+==================
+{'a': @ @ 1, 'b': @ @ : 2}
+---
+(source_file body: (dictionary
+  entry: (entry
+    key: (string literal: (string_literal opening: (string_delimiter) content: (string_content) closing: (string_delimiter)))
+    issue: (syntax_issue (invalid_syntax (unexpected_token)))
+    issue: (syntax_issue (invalid_syntax (unexpected_token)))
+    value: (integer digits: (integer_digits)))
+  entry: (entry
+    key: (string literal: (string_literal opening: (string_delimiter) content: (string_content) closing: (string_delimiter)))
+    issue: (syntax_issue (invalid_syntax (unexpected_token)))
+    issue: (syntax_issue (invalid_syntax (unexpected_token)))
+    issue: (syntax_issue (invalid_syntax (unexpected_token)))
+    value: (integer digits: (integer_digits)))))

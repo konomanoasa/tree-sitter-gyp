@@ -1,0 +1,12 @@
+.DS_Store
+
+build/
+*.dylib
+*.o
+
+node_modules/
+
+.venv/
+dist/
+
+target/

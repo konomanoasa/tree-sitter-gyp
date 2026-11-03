@@ -1,0 +1,786 @@
+[
+  {
+    "type": "comment",
+    "named": true,
+    "extra": true,
+    "fields": {
+      "issue": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "syntax_issue",
+            "named": true
+          }
+        ]
+      }
+    },
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "comment_content",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "dictionary",
+    "named": true,
+    "fields": {
+      "closing": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "}",
+            "named": false
+          }
+        ]
+      },
+      "entry": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "entry",
+            "named": true
+          }
+        ]
+      },
+      "issue": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "syntax_issue",
+            "named": true
+          }
+        ]
+      },
+      "opening": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "{",
+            "named": false
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "entry",
+    "named": true,
+    "fields": {
+      "issue": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "syntax_issue",
+            "named": true
+          }
+        ]
+      },
+      "key": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      },
+      "separator": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": ":",
+            "named": false
+          }
+        ]
+      },
+      "value": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "dictionary",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "list",
+            "named": true
+          },
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "extra_root_value",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "dictionary",
+          "named": true
+        },
+        {
+          "type": "integer",
+          "named": true
+        },
+        {
+          "type": "list",
+          "named": true
+        },
+        {
+          "type": "string",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "incomplete_syntax",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "invalid_escape",
+          "named": true
+        },
+        {
+          "type": "invalid_indentation",
+          "named": true
+        },
+        {
+          "type": "missing_colon",
+          "named": true
+        },
+        {
+          "type": "missing_comma",
+          "named": true
+        },
+        {
+          "type": "missing_dictionary",
+          "named": true
+        },
+        {
+          "type": "missing_dictionary_close",
+          "named": true
+        },
+        {
+          "type": "missing_digits",
+          "named": true
+        },
+        {
+          "type": "missing_line_continuation_content",
+          "named": true
+        },
+        {
+          "type": "missing_line_continuation_newline",
+          "named": true
+        },
+        {
+          "type": "missing_list_close",
+          "named": true
+        },
+        {
+          "type": "missing_string_close",
+          "named": true
+        },
+        {
+          "type": "missing_string_open",
+          "named": true
+        },
+        {
+          "type": "missing_value",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "integer",
+    "named": true,
+    "fields": {
+      "digits": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "integer_digits",
+            "named": true
+          }
+        ]
+      },
+      "issue": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "syntax_issue",
+            "named": true
+          }
+        ]
+      },
+      "sign": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "+",
+            "named": false
+          },
+          {
+            "type": "-",
+            "named": false
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "invalid_syntax",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "extra_root_value",
+          "named": true
+        },
+        {
+          "type": "invalid_character",
+          "named": true
+        },
+        {
+          "type": "invalid_encoding",
+          "named": true
+        },
+        {
+          "type": "invalid_escape",
+          "named": true
+        },
+        {
+          "type": "invalid_indentation",
+          "named": true
+        },
+        {
+          "type": "invalid_integer",
+          "named": true
+        },
+        {
+          "type": "invalid_string_prefix",
+          "named": true
+        },
+        {
+          "type": "invalid_unicode_escape",
+          "named": true
+        },
+        {
+          "type": "invalid_value",
+          "named": true
+        },
+        {
+          "type": "missing_colon",
+          "named": true
+        },
+        {
+          "type": "missing_comma",
+          "named": true
+        },
+        {
+          "type": "missing_dictionary_close",
+          "named": true
+        },
+        {
+          "type": "missing_digits",
+          "named": true
+        },
+        {
+          "type": "missing_key",
+          "named": true
+        },
+        {
+          "type": "missing_line_continuation_newline",
+          "named": true
+        },
+        {
+          "type": "missing_list_close",
+          "named": true
+        },
+        {
+          "type": "missing_string_close",
+          "named": true
+        },
+        {
+          "type": "missing_value",
+          "named": true
+        },
+        {
+          "type": "non_dictionary_root",
+          "named": true
+        },
+        {
+          "type": "non_string_key",
+          "named": true
+        },
+        {
+          "type": "unexpected_comma",
+          "named": true
+        },
+        {
+          "type": "unexpected_token",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "invalid_unicode_escape",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "escape_sequence",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "line_continuation",
+    "named": true,
+    "extra": true,
+    "fields": {
+      "issue": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "syntax_issue",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "list",
+    "named": true,
+    "fields": {
+      "closing": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "]",
+            "named": false
+          }
+        ]
+      },
+      "element": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "dictionary",
+            "named": true
+          },
+          {
+            "type": "integer",
+            "named": true
+          },
+          {
+            "type": "list",
+            "named": true
+          },
+          {
+            "type": "string",
+            "named": true
+          }
+        ]
+      },
+      "issue": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "syntax_issue",
+            "named": true
+          }
+        ]
+      },
+      "opening": {
+        "multiple": false,
+        "required": true,
+        "types": [
+          {
+            "type": "[",
+            "named": false
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "non_dictionary_root",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "integer",
+          "named": true
+        },
+        {
+          "type": "list",
+          "named": true
+        },
+        {
+          "type": "string",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "non_string_key",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "dictionary",
+          "named": true
+        },
+        {
+          "type": "integer",
+          "named": true
+        },
+        {
+          "type": "list",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "source_file",
+    "named": true,
+    "root": true,
+    "fields": {
+      "body": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "dictionary",
+            "named": true
+          }
+        ]
+      },
+      "issue": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "syntax_issue",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "string",
+    "named": true,
+    "fields": {
+      "literal": {
+        "multiple": true,
+        "required": true,
+        "types": [
+          {
+            "type": "string_literal",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "string_literal",
+    "named": true,
+    "fields": {
+      "closing": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "string_delimiter",
+            "named": true
+          }
+        ]
+      },
+      "content": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "escape_fragment",
+            "named": true
+          },
+          {
+            "type": "escape_sequence",
+            "named": true
+          },
+          {
+            "type": "raw_escape",
+            "named": true
+          },
+          {
+            "type": "string_content",
+            "named": true
+          }
+        ]
+      },
+      "issue": {
+        "multiple": true,
+        "required": false,
+        "types": [
+          {
+            "type": "syntax_issue",
+            "named": true
+          }
+        ]
+      },
+      "opening": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "string_delimiter",
+            "named": true
+          }
+        ]
+      },
+      "prefix": {
+        "multiple": false,
+        "required": false,
+        "types": [
+          {
+            "type": "string_prefix",
+            "named": true
+          }
+        ]
+      }
+    }
+  },
+  {
+    "type": "syntax_issue",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "incomplete_syntax",
+          "named": true
+        },
+        {
+          "type": "invalid_syntax",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "unexpected_comma",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "unexpected_token",
+    "named": true,
+    "fields": {}
+  },
+  {
+    "type": "#",
+    "named": false
+  },
+  {
+    "type": "+",
+    "named": false
+  },
+  {
+    "type": ",",
+    "named": false
+  },
+  {
+    "type": "-",
+    "named": false
+  },
+  {
+    "type": ":",
+    "named": false
+  },
+  {
+    "type": "[",
+    "named": false
+  },
+  {
+    "type": "\\",
+    "named": false
+  },
+  {
+    "type": "]",
+    "named": false
+  },
+  {
+    "type": "comment_content",
+    "named": true
+  },
+  {
+    "type": "escape_fragment",
+    "named": true
+  },
+  {
+    "type": "escape_sequence",
+    "named": true
+  },
+  {
+    "type": "integer_digits",
+    "named": true
+  },
+  {
+    "type": "invalid_character",
+    "named": true
+  },
+  {
+    "type": "invalid_encoding",
+    "named": true
+  },
+  {
+    "type": "invalid_escape",
+    "named": true
+  },
+  {
+    "type": "invalid_indentation",
+    "named": true
+  },
+  {
+    "type": "invalid_integer",
+    "named": true
+  },
+  {
+    "type": "invalid_string_prefix",
+    "named": true
+  },
+  {
+    "type": "invalid_value",
+    "named": true
+  },
+  {
+    "type": "missing_colon",
+    "named": true
+  },
+  {
+    "type": "missing_comma",
+    "named": true
+  },
+  {
+    "type": "missing_dictionary",
+    "named": true
+  },
+  {
+    "type": "missing_dictionary_close",
+    "named": true
+  },
+  {
+    "type": "missing_digits",
+    "named": true
+  },
+  {
+    "type": "missing_key",
+    "named": true
+  },
+  {
+    "type": "missing_line_continuation_content",
+    "named": true
+  },
+  {
+    "type": "missing_line_continuation_newline",
+    "named": true
+  },
+  {
+    "type": "missing_list_close",
+    "named": true
+  },
+  {
+    "type": "missing_string_close",
+    "named": true
+  },
+  {
+    "type": "missing_string_open",
+    "named": true
+  },
+  {
+    "type": "missing_value",
+    "named": true
+  },
+  {
+    "type": "raw_escape",
+    "named": true
+  },
+  {
+    "type": "string_content",
+    "named": true
+  },
+  {
+    "type": "string_delimiter",
+    "named": true
+  },
+  {
+    "type": "string_prefix",
+    "named": true
+  },
+  {
+    "type": "{",
+    "named": false
+  },
+  {
+    "type": "}",
+    "named": false
+  }
+]

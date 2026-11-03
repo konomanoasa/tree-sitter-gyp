@@ -1,0 +1,36 @@
+[package]
+name = "konomanoasa-tree-sitter-gyp"
+version = "0.1.0"
+description = "Tree-sitter grammar for GYP."
+readme = "README.md"
+license = "MIT"
+repository = "https://github.com/konomanoasa/tree-sitter-gyp"
+edition = "2024"
+build = "bindings/rust/build.rs"
+links = "tree-sitter-gyp"
+include = [
+  "/LICENSE",
+  "/README.md",
+  "/bindings/rust/*.rs",
+  "/queries/*.scm",
+  "/src/*.c",
+  "/src/node-types.json",
+  "/src/tree_sitter/*.h",
+  "/test/bindings.test.rs",
+]
+
+[lib]
+path = "bindings/rust/lib.rs"
+
+[[test]]
+name = "bindings"
+path = "test/bindings.test.rs"
+
+[dependencies]
+tree-sitter-language = "=0.1.9"
+
+[dev-dependencies]
+tree-sitter = "=0.27.1"
+
+[build-dependencies]
+cc = "=1.10.0"

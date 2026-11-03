@@ -1,0 +1,243 @@
+==================
+Implicit string concatenation
+==================
+{'': 'a' 'b'}
+---
+(source_file body: (dictionary entry: (entry
+  key: (string literal: (string_literal opening: (string_delimiter) closing: (string_delimiter)))
+  value: (string
+    literal: (string_literal opening: (string_delimiter) content: (string_content) closing: (string_delimiter))
+    literal: (string_literal opening: (string_delimiter) content: (string_content) closing: (string_delimiter))))))
+
+==================
+Raw strings preserve quote protection
+==================
+{'': r'a\b'}
+---
+(source_file body: (dictionary entry: (entry
+  key: (string literal: (string_literal opening: (string_delimiter) closing: (string_delimiter)))
+  value: (string literal: (string_literal prefix: (string_prefix) opening: (string_delimiter)
+    content: (string_content) content: (raw_escape) closing: (string_delimiter))))))
+
+==================
+Malformed hexadecimal escape retains the closing quote
+==================
+{'': '\x1'}
+---
+(source_file body: (dictionary entry: (entry
+  key: (string literal: (string_literal opening: (string_delimiter) closing: (string_delimiter)))
+  value: (string literal: (string_literal opening: (string_delimiter)
+    issue: (syntax_issue (invalid_syntax (invalid_escape))) closing: (string_delimiter))))))
+
+==================
+Prefix at EOF retains the missing opening without inventing a closing
+==================
+{'': r
+---
+(source_file body: (dictionary entry: (entry
+  key: (string literal: (string_literal opening: (string_delimiter) closing: (string_delimiter)))
+  value: (string literal: (string_literal prefix: (string_prefix)
+    issue: (syntax_issue (incomplete_syntax (missing_string_open))))))
+  issue: (syntax_issue (incomplete_syntax (missing_dictionary_close)))))
+
+==================
+Escape at EOF and unclosed containers are independent incomplete requirements
+==================
+{'': '\x1
+---
+(source_file body: (dictionary entry: (entry
+  key: (string literal: (string_literal opening: (string_delimiter) closing: (string_delimiter)))
+  value: (string literal: (string_literal opening: (string_delimiter)
+    issue: (syntax_issue (incomplete_syntax (invalid_escape)))
+    issue: (syntax_issue (incomplete_syntax (missing_string_close))))))
+  issue: (syntax_issue (incomplete_syntax (missing_dictionary_close)))))
+
+==================
+Unsupported string prefix preserves the literal
+==================
+{'': b'text'}
+---
+(source_file body: (dictionary entry: (entry
+  key: (string literal: (string_literal opening: (string_delimiter) closing: (string_delimiter)))
+  value: (string literal: (string_literal issue: (syntax_issue (invalid_syntax (invalid_string_prefix)))
+    opening: (string_delimiter) content: (string_content) closing: (string_delimiter))))))
+
+==================
+Triple quotes retain embedded quotes and newlines
+==================
+{'': '''one'
+two''three'''}
+---
+(source_file body: (dictionary entry: (entry
+  key: (string literal: (string_literal opening: (string_delimiter) closing: (string_delimiter)))
+  value: (string literal: (string_literal opening: (string_delimiter)
+    content: (string_content) content: (string_content) content: (string_content)
+    content: (string_content) content: (string_content) closing: (string_delimiter))))))
+
+==================
+Unicode prefix and escape forms remain literal source
+==================
+{'': u'\x41\u0041\U00000041\N{LATIN CAPITAL LETTER A}\777\q'}
+---
+(source_file body: (dictionary entry: (entry
+  key: (string literal: (string_literal opening: (string_delimiter) closing: (string_delimiter)))
+  value: (string literal: (string_literal prefix: (string_prefix) opening: (string_delimiter)
+    content: (escape_sequence) content: (escape_sequence) content: (escape_sequence)
+    content: (escape_sequence) content: (escape_sequence) content: (escape_sequence)
+    closing: (string_delimiter))))))
+
+==================
+Out of range Unicode escape retains its recognized form
+==================
+{'': '\U00110000'}
+---
+(source_file body: (dictionary entry: (entry
+  key: (string literal: (string_literal opening: (string_delimiter) closing: (string_delimiter)))
+  value: (string literal: (string_literal opening: (string_delimiter)
+    issue: (syntax_issue (invalid_syntax (invalid_unicode_escape (escape_sequence))))
+    closing: (string_delimiter))))))
+
+==================
+Physical newline ends an incomplete single quoted literal
+==================
+{'': 'text
+}
+---
+(source_file body: (dictionary entry: (entry
+  key: (string literal: (string_literal opening: (string_delimiter) closing: (string_delimiter)))
+  value: (string literal: (string_literal opening: (string_delimiter) content: (string_content)
+    issue: (syntax_issue (invalid_syntax (missing_string_close))))))))
+
+==================
+Empty named escape is invalid without consuming the closing quote
+==================
+{'': '\N{}'}
+---
+(source_file body: (dictionary entry: (entry
+  key: (string literal: (string_literal opening: (string_delimiter) closing: (string_delimiter)))
+  value: (string literal: (string_literal opening: (string_delimiter)
+    issue: (syntax_issue (invalid_syntax (invalid_escape))) closing: (string_delimiter))))))
+
+==================
+Named escape names keep escaped quotes and line continuations inside the literal
+==================
+{'': '\N{a\'b}' '\N{a\
+b}'}
+---
+(source_file body: (dictionary entry: (entry
+  key: (string literal: (string_literal opening: (string_delimiter) closing: (string_delimiter)))
+  value: (string
+    literal: (string_literal opening: (string_delimiter) content: (escape_sequence) closing: (string_delimiter))
+    literal: (string_literal opening: (string_delimiter) content: (escape_sequence) closing: (string_delimiter))))))
+
+==================
+Triple quoted named escape names end only at a closing brace or the closing quotes
+==================
+{'': '''\N{a'b''c
+d}''' '''\N{a'''}
+---
+(source_file body: (dictionary entry: (entry
+  key: (string literal: (string_literal opening: (string_delimiter) closing: (string_delimiter)))
+  value: (string
+    literal: (string_literal opening: (string_delimiter) content: (escape_sequence) closing: (string_delimiter))
+    literal: (string_literal opening: (string_delimiter)
+      issue: (syntax_issue (invalid_syntax (invalid_escape))) closing: (string_delimiter))))))
+
+==================
+Named escape interrupted by EOF after quotes inside a triple quoted literal is incomplete
+==================
+{'': '''\N{a''
+---
+(source_file body: (dictionary entry: (entry
+  key: (string literal: (string_literal opening: (string_delimiter) closing: (string_delimiter)))
+  value: (string literal: (string_literal opening: (string_delimiter)
+    issue: (syntax_issue (incomplete_syntax (invalid_escape)))
+    issue: (syntax_issue (incomplete_syntax (missing_string_close))))))
+  issue: (syntax_issue (incomplete_syntax (missing_dictionary_close)))))
+
+==================
+Unsupported raw prefix combinations retain raw escapes without nonraw escape issues
+==================
+{'': br'\x1' rb'\x1' fr'\x1' rf'\x1'}
+---
+(source_file body: (dictionary entry: (entry
+  key: (string literal: (string_literal opening: (string_delimiter) closing: (string_delimiter)))
+  value: (string
+    literal: (string_literal issue: (syntax_issue (invalid_syntax (invalid_string_prefix))) opening: (string_delimiter) content: (raw_escape) content: (string_content) closing: (string_delimiter))
+    literal: (string_literal issue: (syntax_issue (invalid_syntax (invalid_string_prefix))) opening: (string_delimiter) content: (raw_escape) content: (string_content) closing: (string_delimiter))
+    literal: (string_literal issue: (syntax_issue (invalid_syntax (invalid_string_prefix))) opening: (string_delimiter) content: (raw_escape) content: (string_content) closing: (string_delimiter))
+    literal: (string_literal issue: (syntax_issue (invalid_syntax (invalid_string_prefix))) opening: (string_delimiter) content: (raw_escape) content: (string_content) closing: (string_delimiter))))))
+
+==================
+Other unsupported prefixes retain uninterpreted content instead of choosing an escape language
+==================
+{'': rr'\x1' brf'\U00110000' ur'\N{}' b'\x1' f'\x1'}
+---
+(source_file body: (dictionary entry: (entry
+  key: (string literal: (string_literal opening: (string_delimiter) closing: (string_delimiter)))
+  value: (string
+    literal: (string_literal issue: (syntax_issue (invalid_syntax (invalid_string_prefix))) opening: (string_delimiter) content: (string_content) closing: (string_delimiter))
+    literal: (string_literal issue: (syntax_issue (invalid_syntax (invalid_string_prefix))) opening: (string_delimiter) content: (string_content) closing: (string_delimiter))
+    literal: (string_literal issue: (syntax_issue (invalid_syntax (invalid_string_prefix))) opening: (string_delimiter) content: (string_content) closing: (string_delimiter))
+    literal: (string_literal issue: (syntax_issue (invalid_syntax (invalid_string_prefix))) opening: (string_delimiter) content: (string_content) closing: (string_delimiter))
+    literal: (string_literal issue: (syntax_issue (invalid_syntax (invalid_string_prefix))) opening: (string_delimiter) content: (string_content) closing: (string_delimiter))))))
+
+==================
+Uninterpreted content preserves quote protection and resets before the next ordinary literal
+==================
+{'': ur'a\'b' '\x1'}
+---
+(source_file body: (dictionary entry: (entry
+  key: (string literal: (string_literal opening: (string_delimiter) closing: (string_delimiter)))
+  value: (string
+    literal: (string_literal issue: (syntax_issue (invalid_syntax (invalid_string_prefix))) opening: (string_delimiter) content: (string_content) closing: (string_delimiter))
+    literal: (string_literal opening: (string_delimiter) issue: (syntax_issue (invalid_syntax (invalid_escape))) closing: (string_delimiter))))))
+
+==================
+Uninterpreted content at EOF retains a trailing backslash and independent missing closes
+==================
+{'': rr'\
+---
+(source_file body: (dictionary entry: (entry
+  key: (string literal: (string_literal opening: (string_delimiter) closing: (string_delimiter)))
+  value: (string literal: (string_literal issue: (syntax_issue (invalid_syntax (invalid_string_prefix))) opening: (string_delimiter) content: (string_content)
+    issue: (syntax_issue (incomplete_syntax (missing_string_close))))))
+  issue: (syntax_issue (incomplete_syntax (missing_dictionary_close)))))
+
+==================
+Raw prefix recovery at EOF still reports the incomplete raw escape
+==================
+{'': br'\
+---
+(source_file body: (dictionary entry: (entry
+  key: (string literal: (string_literal opening: (string_delimiter) closing: (string_delimiter)))
+  value: (string literal: (string_literal issue: (syntax_issue (invalid_syntax (invalid_string_prefix))) opening: (string_delimiter)
+    issue: (syntax_issue (incomplete_syntax (invalid_escape)))
+    issue: (syntax_issue (incomplete_syntax (missing_string_close))))))
+  issue: (syntax_issue (incomplete_syntax (missing_dictionary_close)))))
+
+==================
+Triple quoted prefix recovery retains protected physical newlines in each body mode
+==================
+{'': ur'''a\
+b''' br'''a\
+b'''}
+---
+(source_file body: (dictionary entry: (entry
+  key: (string literal: (string_literal opening: (string_delimiter) closing: (string_delimiter)))
+  value: (string
+    literal: (string_literal issue: (syntax_issue (invalid_syntax (invalid_string_prefix))) opening: (string_delimiter) content: (string_content) closing: (string_delimiter))
+    literal: (string_literal issue: (syntax_issue (invalid_syntax (invalid_string_prefix))) opening: (string_delimiter) content: (string_content) content: (raw_escape) content: (string_content) closing: (string_delimiter))))))
+
+==================
+Extra root strings are separated by a comment ending their logical line
+==================
+{} 'a' # c
+r'b'
+---
+(source_file body: (dictionary)
+  issue: (syntax_issue (invalid_syntax (extra_root_value
+    (string literal: (string_literal opening: (string_delimiter) content: (string_content) closing: (string_delimiter))))))
+  (comment (comment_content))
+  issue: (syntax_issue (invalid_syntax (extra_root_value
+    (string literal: (string_literal prefix: (string_prefix) opening: (string_delimiter) content: (string_content) closing: (string_delimiter)))))))
