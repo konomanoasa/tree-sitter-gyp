@@ -241,10 +241,10 @@ function main(arguments_) {
   const runner = createTreeSitter();
   try {
     if (command === "build") {
-      mkdirSync(join(root, "build"), { recursive: true });
+      mkdirSync(join(root, "parsers"), { recursive: true });
       const library = join(
         root,
-        "build",
+        "parsers",
         process.platform === "win32" ? "gyp.dll" : "gyp.so",
       );
       return resultStatus(

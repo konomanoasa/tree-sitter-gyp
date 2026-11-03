@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { parse, parseMany } from "./support/cli.js";
 import { issues, readTrees, walk } from "./support/cst.js";
+import { parse, parseMany } from "./support/parser.js";
 
 test("empty source exposes the required dictionary at EOF", () => {
   assert.deepEqual(issues(parse("")), [

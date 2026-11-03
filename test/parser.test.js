@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { parse, parseMany } from "./support/cli.js";
 import { issues, walk } from "./support/cst.js";
+import { parse, parseMany } from "./support/parser.js";
 
 test("top-level layout follows physical and logical line boundaries for every newline form", () => {
   const cases = [

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { parse, parseMany } from "./support/cli.js";
+import { parse, parseMany } from "./support/parser.js";
 
 const histories = [
   {
